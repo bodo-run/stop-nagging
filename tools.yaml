@@ -1,5 +1,6 @@
 ecosystems:
   nodejs:
+    check_ecosystem: "command -v node >/dev/null 2>&1"
     tools:
       - name: "npm"
         executable: "npm"
@@ -26,6 +27,7 @@ ecosystems:
         skip: false
 
   cloud:
+    check_ecosystem: "command -v aws >/dev/null 2>&1 || command -v gcloud >/dev/null 2>&1 || command -v az >/dev/null 2>&1"
     tools:
       - name: "vercel"
         executable: "vercel"
@@ -50,6 +52,7 @@ ecosystems:
         skip: false
 
   database:
+    check_ecosystem: "command -v prisma >/dev/null 2>&1"
     tools:
       - name: "prisma"
         executable: "prisma"
@@ -59,6 +62,7 @@ ecosystems:
         skip: false
 
   frameworks:
+    check_ecosystem: "command -v next >/dev/null 2>&1 || command -v gatsby >/dev/null 2>&1 || command -v ng >/dev/null 2>&1"
     tools:
       - name: "next"
         executable: "next"
@@ -83,6 +87,7 @@ ecosystems:
         skip: false
 
   python:
+    check_ecosystem: "command -v python3 >/dev/null 2>&1 || command -v python >/dev/null 2>&1"
     tools:
       - name: "pip"
         executable: "pip"
@@ -115,6 +120,7 @@ ecosystems:
         skip: false
 
   ruby:
+    check_ecosystem: "command -v ruby >/dev/null 2>&1"
     tools:
       - name: "bundler"
         executable: "bundle"
@@ -125,6 +131,7 @@ ecosystems:
         skip: false
 
   php:
+    check_ecosystem: "command -v php >/dev/null 2>&1"
     tools:
       - name: "composer"
         executable: "composer"
@@ -135,6 +142,7 @@ ecosystems:
         skip: false
 
   java:
+    check_ecosystem: "command -v java >/dev/null 2>&1"
     tools:
       - name: "gradle"
         executable: "gradle"
@@ -154,6 +162,7 @@ ecosystems:
         skip: false
 
   dotnet:
+    check_ecosystem: "command -v dotnet >/dev/null 2>&1"
     tools:
       - name: "dotnet"
         executable: "dotnet"
@@ -164,6 +173,7 @@ ecosystems:
         skip: false
 
   rust:
+    check_ecosystem: "command -v cargo >/dev/null 2>&1"
     tools:
       - name: "cargo"
         executable: "cargo"
@@ -173,6 +183,7 @@ ecosystems:
         skip: false
 
   cloud_providers:
+    check_ecosystem: "command -v aws >/dev/null 2>&1 || command -v gcloud >/dev/null 2>&1 || command -v az >/dev/null 2>&1"
     tools:
       - name: "aws"
         executable: "aws"

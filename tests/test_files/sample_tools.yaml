@@ -1,5 +1,6 @@
 ecosystems:
   test:
+    check_ecosystem: "true"
     tools:
       - name: "echo_test"
         executable: "echo"

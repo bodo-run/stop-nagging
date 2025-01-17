@@ -1,5 +1,6 @@
 ecosystems:
   nodejs:
+    check_ecosystem: "command -v node >/dev/null 2>&1"
     tools:
       - name: "npm"
         executable: "npm"

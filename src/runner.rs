@@ -1,10 +1,17 @@
-use crate::errors::StopNaggingError;
 use crate::yaml_config::YamlToolsConfig;
 use std::{collections::HashSet, env, process::Command};
 
 struct EnvVarBackup {
     key: String,
     original_value: Option<String>,
+}
+
+fn check_ecosystem(check_cmd: &str) -> bool {
+    if let Ok(output) = Command::new("sh").arg("-c").arg(check_cmd).output() {
+        output.status.success()
+    } else {
+        false
+    }
 }
 
 pub fn disable_nags(
@@ -26,8 +33,14 @@ pub fn disable_nags(
         let ecosystem_name_lower = ecosystem_name.to_lowercase();
 
         if !run_all_ecosystems && !selected_ecosystems.contains(&ecosystem_name_lower) {
-            println!("Skipping ecosystem: {}", ecosystem_name);
             continue;
+        }
+
+        // Check if ecosystem should be processed based on check_ecosystem command
+        if let Some(check_cmd) = &ecosystem_config.check_ecosystem {
+            if !check_ecosystem(check_cmd) {
+                continue;
+            }
         }
 
         for tool in &ecosystem_config.tools {
@@ -92,39 +105,17 @@ pub fn disable_nags(
 }
 
 pub fn check_tool_executable(executable: &str) -> Result<(), String> {
-    #[cfg(windows)]
-    let (cmd, arg) = ("where", executable);
-    #[cfg(not(windows))]
-    let (cmd, arg) = ("which", executable);
-
-    let output = Command::new(cmd)
-        .arg(arg)
-        .output()
-        .map_err(|e| format!("Error running '{}': {}", cmd, e))?;
-
-    if !output.status.success() {
-        return Err(format!("Executable '{}' not found in PATH", executable));
+    let which_cmd = format!("command -v {}", executable);
+    match Command::new("sh").arg("-c").arg(&which_cmd).output() {
+        Ok(output) if output.status.success() => Ok(()),
+        _ => Err(format!("'{}' not found in PATH", executable)),
     }
-    Ok(())
 }
 
-pub fn run_shell_command(cmd_str: &str) -> Result<(), StopNaggingError> {
-    #[cfg(windows)]
-    let (shell, shell_arg) = ("cmd", "/C");
-    #[cfg(not(windows))]
-    let (shell, shell_arg) = ("sh", "-c");
-
-    let status = Command::new(shell)
-        .arg(shell_arg)
-        .arg(cmd_str)
-        .status()
-        .map_err(|e| StopNaggingError::Command(e.to_string()))?;
-
-    if !status.success() {
-        return Err(StopNaggingError::Command(format!(
-            "Command '{}' exited with status: {}",
-            cmd_str, status
-        )));
+pub fn run_shell_command(cmd: &str) -> Result<(), String> {
+    match Command::new("sh").arg("-c").arg(cmd).output() {
+        Ok(output) if output.status.success() => Ok(()),
+        Ok(output) => Err(String::from_utf8_lossy(&output.stderr).to_string()),
+        Err(e) => Err(e.to_string()),
     }
-    Ok(())
 }
