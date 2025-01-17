@@ -6,7 +6,7 @@ fn test_disable_nags_empty_config() {
     let config = YamlToolsConfig {
         ecosystems: HashMap::new(),
     };
-    stop_nagging::runner::disable_nags(&config, &[], &[]);
+    stop_nagging::runner::disable_nags(&config, &[], &[], &[], false);
 }
 
 #[test]
@@ -30,7 +30,7 @@ fn test_disable_nags_one_tool_skip_true() {
     );
 
     let config = YamlToolsConfig { ecosystems };
-    stop_nagging::runner::disable_nags(&config, &[], &[]);
+    stop_nagging::runner::disable_nags(&config, &[], &[], &[], false);
 }
 
 #[test]
@@ -54,7 +54,7 @@ fn test_disable_nags_with_ignore_list() {
     );
 
     let config = YamlToolsConfig { ecosystems };
-    stop_nagging::runner::disable_nags(&config, &[], &["test-tool".to_string()]);
+    stop_nagging::runner::disable_nags(&config, &[], &[], &["test-tool".to_string()], false);
 }
 
 #[test]
@@ -78,7 +78,7 @@ fn test_disable_nags_with_ecosystem_filter() {
     );
 
     let config = YamlToolsConfig { ecosystems };
-    stop_nagging::runner::disable_nags(&config, &["other-ecosystem".to_string()], &[]);
+    stop_nagging::runner::disable_nags(&config, &["other-ecosystem".to_string()], &[], &[], false);
 }
 
 #[test]
@@ -92,4 +92,52 @@ fn test_run_shell_command_success() {
     println!("Hello");
     let result = stop_nagging::runner::run_shell_command("echo test");
     assert!(result.is_ok());
+}
+
+#[test]
+fn test_disable_nags_with_ignore_ecosystems() {
+    let mut tools = Vec::new();
+    tools.push(ToolEntry {
+        name: "test-tool".to_string(),
+        executable: "test-executable".to_string(),
+        skip: None,
+        env: None,
+        commands: None,
+    });
+
+    let mut ecosystems = HashMap::new();
+    ecosystems.insert(
+        "test-ecosystem".to_string(),
+        EcosystemConfig {
+            tools,
+            check_ecosystem: None,
+        },
+    );
+
+    let config = YamlToolsConfig { ecosystems };
+    stop_nagging::runner::disable_nags(&config, &[], &["test-ecosystem".to_string()], &[], false);
+}
+
+#[test]
+fn test_disable_nags_with_verbose() {
+    let mut tools = Vec::new();
+    tools.push(ToolEntry {
+        name: "test-tool".to_string(),
+        executable: "test-executable".to_string(),
+        skip: None,
+        env: None,
+        commands: None,
+    });
+
+    let mut ecosystems = HashMap::new();
+    ecosystems.insert(
+        "test-ecosystem".to_string(),
+        EcosystemConfig {
+            tools,
+            check_ecosystem: None,
+        },
+    );
+
+    let config = YamlToolsConfig { ecosystems };
+    stop_nagging::runner::disable_nags(&config, &[], &[], &[], true);
 }

@@ -17,13 +17,19 @@ fn check_ecosystem(check_cmd: &str) -> bool {
 pub fn disable_nags(
     yaml_config: &YamlToolsConfig,
     selected_ecosystems: &[String],
+    ignored_ecosystems: &[String],
     ignore_list: &[String],
+    verbose: bool,
 ) {
     let selected_ecosystems: HashSet<String> = selected_ecosystems
         .iter()
         .map(|s| s.to_lowercase())
         .collect();
     let ignore_list: HashSet<String> = ignore_list.iter().map(|s| s.to_lowercase()).collect();
+    let ignored_ecosystems: HashSet<String> = ignored_ecosystems
+        .iter()
+        .map(|s| s.to_lowercase())
+        .collect();
 
     let run_all_ecosystems = selected_ecosystems.is_empty();
 
@@ -32,28 +38,55 @@ pub fn disable_nags(
     for (ecosystem_name, ecosystem_config) in &yaml_config.ecosystems {
         let ecosystem_name_lower = ecosystem_name.to_lowercase();
 
+        // Skip if ecosystem is in ignored list
+        if ignored_ecosystems.contains(&ecosystem_name_lower) {
+            if verbose {
+                println!("Ignoring entire ecosystem: {}", ecosystem_name);
+            }
+            continue;
+        }
+
         if !run_all_ecosystems && !selected_ecosystems.contains(&ecosystem_name_lower) {
             continue;
+        }
+
+        if verbose {
+            println!("Checking ecosystem: {}", ecosystem_name);
         }
 
         // Check if ecosystem should be processed based on check_ecosystem command
         if let Some(check_cmd) = &ecosystem_config.check_ecosystem {
             if !check_ecosystem(check_cmd) {
+                if verbose {
+                    println!(
+                        "Ecosystem '{}' check command failed, skipping.",
+                        ecosystem_name
+                    );
+                }
                 continue;
             }
         }
 
         for tool in &ecosystem_config.tools {
             if tool.skip.unwrap_or(false) || ignore_list.contains(&tool.name.to_lowercase()) {
-                println!(
-                    "Ignoring tool: {} (ecosystem: {})",
-                    tool.name, ecosystem_name
-                );
+                if verbose {
+                    println!(
+                        "Skipping tool '{}' in ecosystem '{}'",
+                        tool.name, ecosystem_name
+                    );
+                }
                 continue;
             }
 
             match check_tool_executable(&tool.executable) {
-                Ok(()) => { /* tool found, continue */ }
+                Ok(()) => {
+                    if verbose {
+                        println!(
+                            "Tool '{}' found in PATH for ecosystem '{}'",
+                            tool.name, ecosystem_name
+                        );
+                    }
+                }
                 Err(msg) => {
                     eprintln!(
                         "Warning: Tool '{}' not found in ecosystem '{}': {}",
@@ -72,23 +105,27 @@ pub fn disable_nags(
                     });
 
                     env::set_var(key, val);
-                    println!(
-                        "Set {}={} for tool {} in {}",
-                        key, val, tool.name, ecosystem_name
-                    );
+                    if verbose {
+                        println!(
+                            "Set env var '{}'='{}' for tool '{}' in ecosystem '{}'",
+                            key, val, tool.name, ecosystem_name
+                        );
+                    }
                 }
             }
 
             if let Some(cmds) = &tool.commands {
                 for cmd_str in cmds {
-                    println!(
-                        "Running command for {} in {}: {}",
-                        tool.name, ecosystem_name, cmd_str
-                    );
+                    if verbose {
+                        println!(
+                            "Running command '{}' for tool '{}' in ecosystem '{}'",
+                            cmd_str, tool.name, ecosystem_name
+                        );
+                    }
                     if let Err(e) = run_shell_command(cmd_str) {
                         eprintln!("Warning: Failed to run command '{}': {}", cmd_str, e);
-                    } else {
-                        println!("Command succeeded.");
+                    } else if verbose {
+                        println!("Command '{}' succeeded.", cmd_str);
                     }
                 }
             }

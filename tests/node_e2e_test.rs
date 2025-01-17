@@ -77,8 +77,10 @@ fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
     stop_nagging_cmd
         .arg("--ecosystems")
         .arg("nodejs")
+        .arg("--verbose")
         .assert()
-        .success();
+        .success()
+        .stdout(predicate::str::contains("Checking ecosystem: nodejs"));
 
     // Run npm config list to verify the environment variable is set
     let mut env_cmd = Command::new("npm");
