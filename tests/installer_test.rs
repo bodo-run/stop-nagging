@@ -186,40 +186,12 @@ fn modify_windows_script(
     temp_binary: &PathBuf,
     install_dir: &PathBuf,
 ) -> String {
-    let script = original_script
-        .replace(
-            "Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath -UseBasicParsing",
-            &format!(
-                "Copy-Item -Path \"{}\" -Destination \"$InstallDir\\stop-nagging.exe\" -Force",
-                temp_binary.to_str().unwrap().replace('\\', "\\\\")
-            ),
-        )
-        .replace(
-            "$InstallDir = \"$HOME\\.local\\bin\"",
-            &format!(
-                "$InstallDir = \"{}\"",
-                install_dir.to_str().unwrap().replace('\\', "\\\\")
-            ),
-        );
-
-    // Remove the extraction part since we're not dealing with a zip
-    let mut modified_lines = Vec::new();
-    let mut skip_block = false;
-    for line in script.lines() {
-        if line.contains("Write-Host \"Extracting archive...\"") {
-            modified_lines.push("Write-Host \"Copying binary...\"");
-            skip_block = true;
-            continue;
-        }
-        if skip_block {
-            if line.trim() == "}" {
-                skip_block = false;
-            }
-            continue;
-        }
-        if !line.contains("$zipPath") && !line.contains("extractDir") {
-            modified_lines.push(line);
-        }
-    }
-    modified_lines.join("\n")
+    original_script.replace(
+        "$InstallDir = \"$HOME\\.local\\bin\"",
+        &format!(
+            "$InstallDir = \"{}\"\n$LocalBinary = \"{}\"",
+            install_dir.to_str().unwrap().replace('\\', "\\\\"),
+            temp_binary.to_str().unwrap().replace('\\', "\\\\")
+        ),
+    )
 }
