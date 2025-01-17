@@ -1,6 +1,7 @@
 # stop-nagging
 
-stop-nagging is a Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings from various CLI tools and development tools.  
+`stop-nagging` is a Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings from various CLI tools and development tools. It also disables telemetry and other tracking mechanisms.
+
 It uses a YAML file (`tools.yaml`) to list each tool's name, environment variables, and commands to run, making it easy for new contributors to update the logic without writing Rust code.
 
 ## Features
@@ -49,11 +50,33 @@ Then add `~/.local/bin` to your PATH if not already.
 stop-nagging [options]
 ```
 
-- Without arguments: Runs with default settings, reading `tools.yaml` in the project directory (or local directory)
-- Example:
-  ```bash
-  stop-nagging
-  ```
+### Options
+
+- `-y, --yaml <FILE>`: Optional path to a custom YAML configuration file
+  - If not provided, the default built-in configuration will be used
+  - If the custom file fails to load, falls back to the default configuration
+  - See [`tools.yaml`](tools.yaml) for the default configuration
+- `--ignore-tools <TOOLS>`: Comma-separated list of tool names to ignore (e.g., `npm,yarn`)
+- `--ecosystems <ECOSYSTEMS>`: Comma-separated list of ecosystems to run (leave empty to run all)
+
+### Examples
+
+```bash
+# Run with default built-in configuration
+stop-nagging
+
+# Use a custom YAML file
+stop-nagging --yaml custom-tools.yaml
+
+# Ignore specific tools (using default configuration)
+stop-nagging --ignore-tools npm,yarn,pnpm
+
+# Only run for specific ecosystems (using default configuration)
+stop-nagging --ecosystems nodejs,python
+
+# Combine multiple options with custom configuration
+stop-nagging --yaml custom.yaml --ignore-tools npm --ecosystems nodejs
+```
 
 ## Contributing
 

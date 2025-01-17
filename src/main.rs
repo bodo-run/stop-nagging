@@ -10,14 +10,22 @@ use clap::Parser;
 
 fn main() {
     let args = StopNaggingArgs::parse();
-    let yaml_path = &args.yaml;
 
-    let yaml_config = match YamlToolsConfig::from_yaml_file(yaml_path) {
-        Ok(config) => config,
-        Err(e) => {
-            eprintln!("Failed to read YAML config '{}': {}", yaml_path, e);
-            std::process::exit(0);
+    let yaml_config = if let Some(yaml_path) = args.yaml {
+        // User provided a custom YAML file
+        match YamlToolsConfig::from_yaml_file(&yaml_path) {
+            Ok(config) => config,
+            Err(e) => {
+                eprintln!("Failed to read custom YAML config '{}': {}", yaml_path, e);
+                eprintln!("Falling back to default configuration");
+                YamlToolsConfig::from_yaml_str(include_str!("../tools.yaml"))
+                    .expect("Default tools.yaml should be valid")
+            }
         }
+    } else {
+        // Use the embedded tools.yaml
+        YamlToolsConfig::from_yaml_str(include_str!("../tools.yaml"))
+            .expect("Default tools.yaml should be valid")
     };
 
     disable_nags(&yaml_config, &args.ecosystems, &args.ignore_tools);
