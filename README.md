@@ -1,6 +1,7 @@
 # stop-nagging
 
-stop-nagging is a Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings from various CLI tools and development tools.  
+`stop-nagging` is a Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings from various CLI tools and development tools. It also disables telemetry and other tracking mechanisms.
+
 It uses a YAML file (`tools.yaml`) to list each tool's name, environment variables, and commands to run, making it easy for new contributors to update the logic without writing Rust code.
 
 ## Features

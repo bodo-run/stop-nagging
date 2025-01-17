@@ -2,6 +2,11 @@ use crate::errors::StopNaggingError;
 use crate::yaml_config::YamlToolsConfig;
 use std::{collections::HashSet, env, process::Command};
 
+struct EnvVarBackup {
+    key: String,
+    original_value: Option<String>,
+}
+
 pub fn disable_nags(
     yaml_config: &YamlToolsConfig,
     selected_ecosystems: &[String],
@@ -14,6 +19,8 @@ pub fn disable_nags(
     let ignore_list: HashSet<String> = ignore_list.iter().map(|s| s.to_lowercase()).collect();
 
     let run_all_ecosystems = selected_ecosystems.is_empty();
+
+    let mut env_backups: Vec<EnvVarBackup> = Vec::new();
 
     for (ecosystem_name, ecosystem_config) in &yaml_config.ecosystems {
         let ecosystem_name_lower = ecosystem_name.to_lowercase();
@@ -45,18 +52,17 @@ pub fn disable_nags(
 
             if let Some(env_vars) = &tool.env {
                 for (key, val) in env_vars {
-                    if env::var_os(key).is_some() {
-                        eprintln!(
-                            "Warning: Env var '{}' is already set; skipping override for tool '{}'.",
-                            key, tool.name
-                        );
-                    } else {
-                        env::set_var(key, val);
-                        println!(
-                            "Set {}={} for tool {} in {}",
-                            key, val, tool.name, ecosystem_name
-                        );
-                    }
+                    let original = env::var(key).ok();
+                    env_backups.push(EnvVarBackup {
+                        key: key.clone(),
+                        original_value: original,
+                    });
+
+                    env::set_var(key, val);
+                    println!(
+                        "Set {}={} for tool {} in {}",
+                        key, val, tool.name, ecosystem_name
+                    );
                 }
             }
 
@@ -75,26 +81,41 @@ pub fn disable_nags(
             }
         }
     }
+
+    // Restore environment variables
+    for backup in env_backups {
+        match backup.original_value {
+            Some(val) => env::set_var(&backup.key, val),
+            None => env::remove_var(&backup.key),
+        }
+    }
 }
 
 pub fn check_tool_executable(executable: &str) -> Result<(), String> {
-    let which = Command::new("which").arg(executable).output();
-    match which {
-        Ok(output) => {
-            if !output.status.success() {
-                return Err(format!("Executable '{}' not found in PATH", executable));
-            }
-        }
-        Err(e) => {
-            return Err(format!("Error running 'which {}': {}", executable, e));
-        }
+    #[cfg(windows)]
+    let (cmd, arg) = ("where", executable);
+    #[cfg(not(windows))]
+    let (cmd, arg) = ("which", executable);
+
+    let output = Command::new(cmd)
+        .arg(arg)
+        .output()
+        .map_err(|e| format!("Error running '{}': {}", cmd, e))?;
+
+    if !output.status.success() {
+        return Err(format!("Executable '{}' not found in PATH", executable));
     }
     Ok(())
 }
 
 pub fn run_shell_command(cmd_str: &str) -> Result<(), StopNaggingError> {
-    let status = Command::new("sh")
-        .arg("-c")
+    #[cfg(windows)]
+    let (shell, shell_arg) = ("cmd", "/C");
+    #[cfg(not(windows))]
+    let (shell, shell_arg) = ("sh", "-c");
+
+    let status = Command::new(shell)
+        .arg(shell_arg)
         .arg(cmd_str)
         .status()
         .map_err(|e| StopNaggingError::Command(e.to_string()))?;
