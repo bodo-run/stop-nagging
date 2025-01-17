@@ -1,5 +1,4 @@
 use assert_cmd::Command;
-use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
 use std::process::{Command as ProcessCommand, Stdio};
