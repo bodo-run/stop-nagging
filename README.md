@@ -100,7 +100,3 @@ You'll see these warnings in the console logs, but your process will exit **0** 
 If an environment variable is **already set**, `stop-nagging` **does not override** it. This avoids unintentional conflicts with variables you may want set differently. If a var is already set, we print a warning like:
 
 Warning: Env var 'KEY' is already set; skipping override for tool 'npm'.
-
-```
-
-```
