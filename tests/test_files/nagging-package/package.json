@@ -1,0 +1,12 @@
+{
+  "name": "nagging-package",
+  "version": "1.0.0",
+  "dependencies": {
+    "left-pad": "^1.0.0",
+    "vercel": "^38.0.0",
+    "prisma": "^2.0.0"
+  },
+  "scripts": {
+    "start": "vercel -v && prisma -v"
+  }
+}
