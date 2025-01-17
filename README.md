@@ -42,6 +42,9 @@ Then add `~/.local/bin` to your PATH if not already.
 
 ## Usage
 
+> [!NOTE]  
+> `stop-nagging` never exits with an error code. The last thing you want is to have your CI fail because of a tool that's not essential. It will print warnings if any of the steps fails.
+
 ```bash
 stop-nagging [options]
 ```
