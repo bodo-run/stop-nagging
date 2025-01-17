@@ -62,6 +62,22 @@ stop-nagging [options]
 3. If more complex logic is needed, you can add or modify Rust code in `src/runner.rs`
 4. Submit a Pull Request
 
+## Behavior: Non-Failing
+
+`stop-nagging` **never** exits with a nonzero code, even if it fails to disable certain nags. This ensures your CI/CD pipeline won't break due to a missing or optional tool. Instead, it prints **warnings** for:
+
+1. Missing executables (not found in `PATH`).
+2. Commands that fail.
+3. Already-set environment variables (which we won't override).
+
+You'll see these warnings in the console logs, but your process will exit **0** regardless.
+
+## Skipping Already-Set Environment Variables
+
+If an environment variable is **already set**, `stop-nagging` **does not override** it. This avoids unintentional conflicts with variables you may want set differently. If a var is already set, we print a warning like:
+
+Warning: Env var 'KEY' is already set; skipping override for tool 'npm'.
+
 ```
 
 ```

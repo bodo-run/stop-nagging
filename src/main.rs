@@ -12,20 +12,16 @@ fn main() {
     let args = StopNaggingArgs::parse();
     let yaml_path = &args.yaml;
 
-    // Parse the YAML
     let yaml_config = match YamlToolsConfig::from_yaml_file(yaml_path) {
         Ok(config) => config,
         Err(e) => {
             eprintln!("Failed to read YAML config '{}': {}", yaml_path, e);
-            std::process::exit(1);
+            std::process::exit(0);
         }
     };
 
-    // Run the disable logic
-    if let Err(e) = disable_nags(&yaml_config, &args.ecosystems, &args.ignore_tools) {
-        eprintln!("Failed to disable nags: {}", e);
-        std::process::exit(1);
-    }
+    disable_nags(&yaml_config, &args.ecosystems, &args.ignore_tools);
 
     println!("All applicable nags have been disabled (or attempts made).");
+    std::process::exit(0);
 }
