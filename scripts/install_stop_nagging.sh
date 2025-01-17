@@ -1,20 +1,42 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This script installs the latest stop-nagging release from GitHub.
-# Usage:
-#   curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
-
 REPO_OWNER="bodo-run"
 REPO_NAME="stop-nagging"
-INSTALL_DIR="$HOME/.local/bin"
+
+# Determine a sensible default install directory
+# We'll check for a directory in PATH that is writable.
+# If none is found, we fall back to "$HOME/.local/bin".
+fallback_dir="$HOME/.local/bin"
+
+# Split PATH on ":" into an array
+IFS=':' read -ra path_entries <<<"$PATH"
+install_candidates=("/usr/local/bin" "${path_entries[@]}")
+install_dir=""
+
+for dir in "${install_candidates[@]}"; do
+    # Skip empty paths
+    [ -z "$dir" ] && continue
+
+    # Check if directory is writable
+    if [ -d "$dir" ] && [ -w "$dir" ]; then
+        install_dir="$dir"
+        break
+    fi
+done
+
+# If we didn't find a writable dir in PATH, fallback to $HOME/.local/bin
+if [ -z "$install_dir" ]; then
+    install_dir="$fallback_dir"
+fi
+
+mkdir -p "$install_dir"
+
+echo "Selected install directory: $install_dir"
 
 # Detect OS and ARCH to choose the correct artifact
 OS=$(uname -s)
 ARCH=$(uname -m)
-
-# Map OS/ARCH to a known target triple from your GitHub Actions build matrix
-# Extend this if you build for more combos.
 
 case "${OS}_${ARCH}" in
 Linux_x86_64)
@@ -24,7 +46,6 @@ Darwin_x86_64)
     TARGET="x86_64-apple-darwin"
     ;;
 Darwin_arm64)
-    # macOS Apple Silicon
     TARGET="aarch64-apple-darwin"
     ;;
 *)
@@ -34,14 +55,9 @@ Darwin_arm64)
     ;;
 esac
 
-# The asset name we use in the GitHub Actions build matrix
 ASSET_NAME="stop-nagging-${TARGET}.tar.gz"
-
-# Ensure the install directory exists
-mkdir -p "${INSTALL_DIR}"
-
-echo "Determined OS/ARCH => ${TARGET}"
-echo "Will download asset: ${ASSET_NAME}"
+echo "OS/ARCH => ${TARGET}"
+echo "Asset name => ${ASSET_NAME}"
 
 echo "Fetching latest release info from GitHub..."
 LATEST_URL=$(
@@ -64,14 +80,21 @@ echo "Extracting archive..."
 tar xzf "${ASSET_NAME}"
 
 # The tar will contain a folder named something like: stop-nagging-${TARGET}/stop-nagging
-# Move the binary to INSTALL_DIR.
-echo "Moving binary to ${INSTALL_DIR}..."
-mv "stop-nagging-${TARGET}/stop-nagging" "${INSTALL_DIR}/stop-nagging"
+echo "Moving binary to ${install_dir}..."
+mv "stop-nagging-${TARGET}/stop-nagging" "${install_dir}/stop-nagging"
+
+echo "Making the binary executable..."
+chmod +x "${install_dir}/stop-nagging"
 
 # Cleanup
 rm -rf "stop-nagging-${TARGET}" "${ASSET_NAME}"
 
 echo "Installation complete!"
-echo "Ensure ${INSTALL_DIR} is in your PATH. For example:"
-echo "  export PATH=\"\$PATH:${INSTALL_DIR}\""
+
+# Check if install_dir is in PATH
+if ! echo "$PATH" | tr ':' '\n' | grep -Fx "$install_dir" >/dev/null; then
+    echo "NOTE: $install_dir is not in your PATH. Add it by running:"
+    echo "  export PATH=\"\$PATH:$install_dir\""
+fi
+
 echo "Now you can run: stop-nagging --help"
