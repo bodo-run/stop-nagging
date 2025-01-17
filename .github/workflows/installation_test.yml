@@ -12,9 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Test installation script
+      - name: Get install script
+        id: get_linux_install_script
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/install_stop_nagging.sh | bash
+          readme=$(cat README.md)
+          #  the script is between <!-- LINUX_INSTALLATION_BEGIN --> and <!-- LINUX_INSTALLATION_END -->
+          #   we remove lines starting with ```
+          script=$(echo "$readme" | sed -n '/<!-- LINUX_INSTALLATION_BEGIN -->/,/<!-- LINUX_INSTALLATION_END -->/p' | sed '/^```/d')
+          echo "::set-output name=script::$script"
+
+      - name: Test installation script
+        run: ${{ steps.get_linux_install_script.outputs.script }}
 
       - name: Verify installation
         run: |
@@ -28,10 +36,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get install script
+        id: get_windows_install_script
+        run: |
+          readme=$(cat README.md)
+          #  the script is between <!-- WINDOWS_INSTALLATION_BEGIN --> and <!-- WINDOWS_INSTALLATION_END -->
+          #   we remove lines starting with ```
+          script=$(echo "$readme" | sed -n '/<!-- WINDOWS_INSTALLATION_BEGIN -->/,/<!-- WINDOWS_INSTALLATION_END -->/p' | sed '/^```/d')
+          echo "::set-output name=script::$script"
+
       - name: Test installation script
         shell: powershell
-        run: |
-          iwr https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/install_stop_nagging.ps1 -useb | iex
+        run: ${{ steps.get_windows_install_script.outputs.script }}
 
       - name: Verify installation
         shell: powershell

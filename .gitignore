@@ -5,3 +5,4 @@ node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+Miniconda3-latest-Linux-x86_64.sh
