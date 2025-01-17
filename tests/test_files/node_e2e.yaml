@@ -1,0 +1,32 @@
+ecosystems:
+  nodejs:
+    tools:
+      - name: "npm"
+        executable: "npm"
+        env:
+          NPM_CONFIG_UPDATE_NOTIFIER: "false"
+        commands:
+          - "echo 'npm e2e command executed'"
+        skip: false
+
+      - name: "pnpm"
+        executable: "pnpm"
+        env: {}
+        commands:
+          - "echo 'pnpm e2e command executed'"
+        skip: false
+
+      - name: "yarn"
+        executable: "yarn"
+        env:
+          YARN_IGNORE_PATH: "1"
+        commands:
+          - "echo 'yarn e2e command executed'"
+        skip: false
+
+      - name: "node"
+        executable: "node"
+        env: {}
+        commands:
+          - "echo 'node e2e command executed'"
+        skip: false
