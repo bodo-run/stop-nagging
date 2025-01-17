@@ -20,7 +20,7 @@ fn test_basic_tool() {
     ecosystems.insert("test-ecosystem".to_string(), ecosystem);
     let config = YamlConfig { ecosystems };
 
-    let runner = Runner::new(config, vec![], vec![]);
+    let runner = Runner::new(config, vec![], vec![], false);
     runner.run();
 }
 
@@ -44,7 +44,7 @@ fn test_env_vars() {
     ecosystems.insert("test-ecosystem".to_string(), ecosystem);
     let config = YamlConfig { ecosystems };
 
-    let runner = Runner::new(config, vec![], vec![]);
+    let runner = Runner::new(config, vec![], vec![], false);
     runner.run();
 }
 
@@ -66,7 +66,7 @@ fn test_ignore_tool() {
     ecosystems.insert("test-ecosystem".to_string(), ecosystem);
     let config = YamlConfig { ecosystems };
 
-    let runner = Runner::new(config, vec!["test-tool".to_string()], vec![]);
+    let runner = Runner::new(config, vec!["test-tool".to_string()], vec![], false);
     runner.run();
 }
 
@@ -88,7 +88,7 @@ fn test_ecosystem_selection() {
     ecosystems.insert("test-ecosystem".to_string(), ecosystem);
     let config = YamlConfig { ecosystems };
 
-    let runner = Runner::new(config, vec![], vec!["other-ecosystem".to_string()]);
+    let runner = Runner::new(config, vec![], vec!["other-ecosystem".to_string()], false);
     runner.run();
 }
 
@@ -110,7 +110,7 @@ fn test_ecosystem_check() {
     ecosystems.insert("test-ecosystem".to_string(), ecosystem);
     let config = YamlConfig { ecosystems };
 
-    let runner = Runner::new(config, vec![], vec![]);
+    let runner = Runner::new(config, vec![], vec![], false);
     runner.run();
 }
 
@@ -132,6 +132,6 @@ fn test_tool_installation() {
     ecosystems.insert("test-ecosystem".to_string(), ecosystem);
     let config = YamlConfig { ecosystems };
 
-    let runner = Runner::new(config, vec![], vec![]);
+    let runner = Runner::new(config, vec![], vec![], false);
     runner.run();
 }

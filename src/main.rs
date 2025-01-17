@@ -1,5 +1,4 @@
 mod cli;
-mod errors;
 mod runner;
 mod yaml_config;
 
@@ -27,6 +26,6 @@ fn main() {
     let ignore_tools = cli.ignore_tools.unwrap_or_default();
     let ecosystems = cli.ecosystems.unwrap_or_default();
 
-    let runner = Runner::new(config, ignore_tools, ecosystems);
+    let runner = Runner::new(config, ignore_tools, ecosystems, cli.verbose);
     runner.run();
 }

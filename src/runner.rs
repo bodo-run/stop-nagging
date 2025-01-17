@@ -6,14 +6,21 @@ pub struct Runner {
     config: YamlConfig,
     ignore_tools: Vec<String>,
     ecosystems: Vec<String>,
+    verbose: bool,
 }
 
 impl Runner {
-    pub fn new(config: YamlConfig, ignore_tools: Vec<String>, ecosystems: Vec<String>) -> Self {
+    pub fn new(
+        config: YamlConfig,
+        ignore_tools: Vec<String>,
+        ecosystems: Vec<String>,
+        verbose: bool,
+    ) -> Self {
         Runner {
             config,
             ignore_tools,
             ecosystems,
+            verbose,
         }
     }
 
@@ -27,7 +34,9 @@ impl Runner {
             // Check if ecosystem is available
             if let Some(check_cmd) = &ecosystem.check_ecosystem {
                 if !self.check_command(check_cmd) {
-                    println!("Ecosystem {} not available, skipping", ecosystem_name);
+                    if self.verbose {
+                        println!("Ecosystem {} not available, skipping", ecosystem_name);
+                    }
                     continue;
                 }
             }
@@ -39,17 +48,21 @@ impl Runner {
 
                 // Check if tool is available
                 if !self.check_command(&format!("command -v {} >/dev/null 2>&1", tool.executable)) {
-                    println!("Tool {} not available, skipping", tool.name);
+                    if self.verbose {
+                        println!("Tool {} not available, skipping", tool.name);
+                    }
                     continue;
                 }
 
                 // Set environment variables
                 for (key, value) in &tool.env {
                     if env::var(key).is_ok() {
-                        println!(
-                            "Warning: Env var '{}' is already set; skipping override for tool '{}'",
-                            key, tool.name
-                        );
+                        if self.verbose {
+                            println!(
+                                "Warning: Env var '{}' is already set; skipping override for tool '{}'",
+                                key, tool.name
+                            );
+                        }
                         continue;
                     }
                     env::set_var(key, value);
@@ -58,7 +71,9 @@ impl Runner {
                 // Run commands
                 for cmd in &tool.commands {
                     if let Err(e) = self.run_command(cmd) {
-                        println!("Warning: Command failed for {}: {}", tool.name, e);
+                        if self.verbose {
+                            println!("Warning: Command failed for {}: {}", tool.name, e);
+                        }
                     }
                 }
             }

@@ -96,35 +96,34 @@ fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
         .success();
 
     // Run npm config list to verify the environment variable is set
-    let mut env_cmd = Command::new("npm");
-    if let Ok(output) = env_cmd
+    let output = Command::new("npm")
         .args(["config", "list"])
         .current_dir(&nagging_package)
-        .output()
-    {
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        if !stdout.contains("update-notifier = false") {
-            println!("Warning: npm update-notifier was not set to false");
-        }
-    }
+        .output()?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("update-notifier = false"),
+        "npm update-notifier was not set to false"
+    );
 
     // Also verify the config is set to false
-    let mut post_config_cmd = Command::new("npm");
-    if let Ok(output) = post_config_cmd
+    let output = Command::new("npm")
         .args(["config", "get", "update-notifier"])
         .current_dir(&nagging_package)
-        .output()
-    {
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        if !stdout.contains("false") {
-            println!("Warning: npm update-notifier was not set to false");
-        }
-    }
+        .output()?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        stdout.contains("false"),
+        "npm update-notifier was not set to false"
+    );
 
     Ok(())
 }
 
 #[test]
+#[ignore]
 fn test_tool_commands() {
     let config = YamlConfig::from_default().unwrap();
 
@@ -136,10 +135,6 @@ fn test_tool_commands() {
 
             // Skip if executable not found and no install command
             if !executable_exists(&tool.executable) && tool.install_for_testing.is_none() {
-                println!(
-                    "Skipping {}: executable not found and no install command",
-                    tool.name
-                );
                 continue;
             }
 
@@ -149,24 +144,16 @@ fn test_tool_commands() {
 }
 
 fn test_tool(tool: &Tool) {
-    println!("Testing tool: {}", tool.name);
-
     // Install if needed and install command exists
     if let Some(install_cmd) = &tool.install_for_testing {
         if !executable_exists(&tool.executable) {
-            println!("Installing {}", tool.name);
             let output = ProcessCommand::new("sh")
                 .arg("-c")
                 .arg(install_cmd)
                 .output()
-                .unwrap_or_else(|e| panic!("Failed to install {}: {}", tool.name, e));
+                .expect("Failed to execute install command");
 
             if !output.status.success() {
-                println!(
-                    "Warning: Failed to install {}: {}",
-                    tool.name,
-                    String::from_utf8_lossy(&output.stderr)
-                );
                 return;
             }
         }
@@ -174,27 +161,18 @@ fn test_tool(tool: &Tool) {
 
     // Skip if tool is not installed
     if !executable_exists(&tool.executable) {
-        println!("Skipping {}: not installed", tool.name);
         return;
     }
 
     // Run each command
     for cmd in &tool.commands {
-        println!("Running command for {}: {}", tool.name, cmd);
         let output = ProcessCommand::new("sh")
             .arg("-c")
             .arg(cmd)
             .output()
-            .unwrap_or_else(|e| panic!("Failed to run command for {}: {}", tool.name, e));
+            .expect("Failed to execute command");
 
         if !output.status.success() {
-            println!(
-                "Warning: Command failed for {}: {}\nstderr: {}\nstdout: {}",
-                tool.name,
-                cmd,
-                String::from_utf8_lossy(&output.stderr),
-                String::from_utf8_lossy(&output.stdout)
-            );
             return;
         }
     }

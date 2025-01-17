@@ -15,4 +15,8 @@ pub struct Cli {
     /// Comma-separated list of ecosystems to run (leave empty to run all)
     #[arg(long, value_delimiter = ',')]
     pub ecosystems: Option<Vec<String>>,
+
+    /// Enable verbose output
+    #[arg(short, long)]
+    pub verbose: bool,
 }
