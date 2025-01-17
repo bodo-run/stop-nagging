@@ -15,8 +15,6 @@ Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.
 
 ## Installation
 
-### Using the Shell Script
-
 ### Quick Install
 
 ```bash

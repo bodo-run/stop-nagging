@@ -34,7 +34,7 @@ pub fn disable_nags(yaml_config: &YamlToolsConfig) -> Result<(), StopNaggingErro
     Ok(())
 }
 
-fn check_tool_executable(executable: &str) -> Result<(), String> {
+pub fn check_tool_executable(executable: &str) -> Result<(), String> {
     let which = Command::new("which").arg(executable).output();
 
     match which {
@@ -50,7 +50,7 @@ fn check_tool_executable(executable: &str) -> Result<(), String> {
     Ok(())
 }
 
-fn run_shell_command(cmd_str: &str) -> Result<(), StopNaggingError> {
+pub fn run_shell_command(cmd_str: &str) -> Result<(), StopNaggingError> {
     let status = Command::new("sh")
         .arg("-c")
         .arg(cmd_str)
