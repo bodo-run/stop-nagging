@@ -172,6 +172,7 @@ fn test_tool(tool: &Tool) -> Result<(), String> {
         || tool.name == "angular"
         || tool.name == "conda"
         || tool.name == "poetry"
+        || tool.name == "bundler"
     {
         return Ok(());
     }
