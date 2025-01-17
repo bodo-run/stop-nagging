@@ -97,10 +97,10 @@ pub fn run_shell_command(cmd_str: &str) -> Result<(), StopNaggingError> {
         .arg("-c")
         .arg(cmd_str)
         .status()
-        .map_err(|e| StopNaggingError::CommandError(e.to_string()))?;
+        .map_err(|e| StopNaggingError::Command(e.to_string()))?;
 
     if !status.success() {
-        return Err(StopNaggingError::CommandError(format!(
+        return Err(StopNaggingError::Command(format!(
             "Command '{}' exited with status: {}",
             cmd_str, status
         )));
