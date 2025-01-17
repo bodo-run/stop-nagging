@@ -1,29 +1,18 @@
 use clap::Parser;
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
-#[command(name = "stop-nagging")]
-#[command(version = "0.1.0")]
-#[command(
-    about = "A Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings."
-)]
-pub struct StopNaggingArgs {
-    /// Optional path to a custom YAML configuration file. If not provided, the default configuration will be used.
-    #[arg(short, long, value_name = "FILE")]
-    pub yaml: Option<String>,
+#[command(author, version, about, long_about = None)]
+pub struct Cli {
+    /// Optional path to a custom YAML configuration file
+    #[arg(short, long)]
+    pub yaml: Option<PathBuf>,
 
-    /// A comma-separated list of tool names to ignore
-    #[arg(long = "ignore-tools", num_args=0.., value_delimiter=',', default_value = "")]
-    pub ignore_tools: Vec<String>,
+    /// Comma-separated list of tool names to ignore
+    #[arg(long, value_delimiter = ',')]
+    pub ignore_tools: Option<Vec<String>>,
 
-    /// A comma-separated list of ecosystems to run (leave empty to run all)
-    #[arg(long = "ecosystems", num_args=0.., value_delimiter=',', default_value = "")]
-    pub ecosystems: Vec<String>,
-
-    /// A comma-separated list of ecosystems to skip entirely
-    #[arg(long = "ignore-ecosystems", num_args=0.., value_delimiter=',', default_value = "")]
-    pub ignore_ecosystems: Vec<String>,
-
-    /// Enable verbose logging
-    #[arg(long = "verbose", short = 'v')]
-    pub verbose: bool,
+    /// Comma-separated list of ecosystems to run (leave empty to run all)
+    #[arg(long, value_delimiter = ',')]
+    pub ecosystems: Option<Vec<String>>,
 }

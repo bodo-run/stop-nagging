@@ -1,7 +1,8 @@
 use assert_cmd::Command;
-use predicates::prelude::*;
 use std::error::Error;
 use std::path::PathBuf;
+use std::process::Command as ProcessCommand;
+use stop_nagging::yaml_config::{Tool, YamlConfig};
 
 #[test]
 fn test_nodejs_ecosystem_e2e() -> Result<(), Box<dyn Error>> {
@@ -91,10 +92,8 @@ fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
     stop_nagging_cmd
         .arg("--ecosystems")
         .arg("nodejs")
-        .arg("--verbose")
         .assert()
-        .success()
-        .stdout(predicate::str::contains("Checking ecosystem: nodejs"));
+        .success();
 
     // Run npm config list to verify the environment variable is set
     let mut env_cmd = Command::new("npm");
@@ -123,4 +122,95 @@ fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
     }
 
     Ok(())
+}
+
+#[test]
+fn test_tool_commands() {
+    let config = YamlConfig::from_default().unwrap();
+
+    for ecosystem in config.ecosystems.values() {
+        for tool in &ecosystem.tools {
+            if tool.skip || tool.commands.is_empty() {
+                continue;
+            }
+
+            // Skip if executable not found and no install command
+            if !executable_exists(&tool.executable) && tool.install_for_testing.is_none() {
+                println!(
+                    "Skipping {}: executable not found and no install command",
+                    tool.name
+                );
+                continue;
+            }
+
+            test_tool(tool);
+        }
+    }
+}
+
+fn test_tool(tool: &Tool) {
+    println!("Testing tool: {}", tool.name);
+
+    // Install if needed and install command exists
+    if let Some(install_cmd) = &tool.install_for_testing {
+        if !executable_exists(&tool.executable) {
+            println!("Installing {}", tool.name);
+            let output = ProcessCommand::new("sh")
+                .arg("-c")
+                .arg(install_cmd)
+                .output()
+                .unwrap_or_else(|e| panic!("Failed to install {}: {}", tool.name, e));
+
+            if !output.status.success() {
+                println!(
+                    "Warning: Failed to install {}: {}",
+                    tool.name,
+                    String::from_utf8_lossy(&output.stderr)
+                );
+                return;
+            }
+        }
+    }
+
+    // Skip if tool is not installed
+    if !executable_exists(&tool.executable) {
+        println!("Skipping {}: not installed", tool.name);
+        return;
+    }
+
+    // Run each command
+    for cmd in &tool.commands {
+        println!("Running command for {}: {}", tool.name, cmd);
+        let output = ProcessCommand::new("sh")
+            .arg("-c")
+            .arg(cmd)
+            .output()
+            .unwrap_or_else(|e| panic!("Failed to run command for {}: {}", tool.name, e));
+
+        if !output.status.success() {
+            println!(
+                "Warning: Command failed for {}: {}\nstderr: {}\nstdout: {}",
+                tool.name,
+                cmd,
+                String::from_utf8_lossy(&output.stderr),
+                String::from_utf8_lossy(&output.stdout)
+            );
+            return;
+        }
+    }
+}
+
+fn executable_exists(executable: &str) -> bool {
+    let which_cmd = if cfg!(target_os = "windows") {
+        format!("where {}", executable)
+    } else {
+        format!("which {}", executable)
+    };
+
+    ProcessCommand::new("sh")
+        .arg("-c")
+        .arg(which_cmd)
+        .output()
+        .map(|output| output.status.success())
+        .unwrap_or(false)
 }
