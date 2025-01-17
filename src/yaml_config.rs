@@ -26,9 +26,13 @@ pub struct ToolEntry {
 }
 
 impl YamlToolsConfig {
+    pub fn from_yaml_str(yaml_str: &str) -> Result<Self, StopNaggingError> {
+        serde_yaml::from_str(yaml_str).map_err(|e| StopNaggingError::YamlError(e.to_string()))
+    }
+
     pub fn from_yaml_file(path: &str) -> Result<Self, StopNaggingError> {
-        let content = fs::read_to_string(path)?;
-        let config: Self = serde_yaml::from_str(&content)?;
-        Ok(config)
+        let contents = fs::read_to_string(path)
+            .map_err(|e| StopNaggingError::FileError(format!("Failed to read file: {}", e)))?;
+        Self::from_yaml_str(&contents)
     }
 }

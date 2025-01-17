@@ -7,7 +7,7 @@ fn test_stop_nagging_cli_help() {
     cmd.arg("--help");
 
     cmd.assert().success().stdout(predicate::str::contains(
-        "Silence or disable nags from various CLI tools",
+        "A Rust-based CLI tool that silences or disables upgrade/advertising nags",
     ));
 }
 
