@@ -14,7 +14,7 @@ jobs:
 
       - name: Test installation script
         run: |
-          curl -s https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/install_stop_nagging.sh | bash
+          curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
 
       - name: Verify installation
         run: |
@@ -31,7 +31,8 @@ jobs:
       - name: Test installation script
         shell: powershell
         run: |
-          iwr https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/scripts/install_stop_nagging.ps1 -UseBasicParsing | iex
+          # Example in PowerShell
+          iwr https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.ps1 -UseBasicParsing | iex
 
       - name: Verify installation
         shell: powershell
