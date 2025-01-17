@@ -22,7 +22,7 @@ Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.
 <!-- LINUX_INSTALLATION_BEGIN -->
 
 ```bash
-curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
+curl -fsSL https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
 ```
 
 <!-- LINUX_INSTALLATION_END -->
@@ -32,7 +32,6 @@ curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/ins
 1. Download and run the PowerShell installer script:
    <!-- WINDOWS_INSTALLATION_BEGIN -->
    ```powershell
-   # Example in PowerShell
    iwr https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.ps1 -UseBasicParsing | iex
    ```
    <!-- WINDOWS_INSTALLATION_END -->
