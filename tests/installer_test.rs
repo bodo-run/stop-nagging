@@ -203,13 +203,23 @@ fn modify_windows_script(
         );
 
     // Remove the extraction part since we're not dealing with a zip
-    script
-        .replace(
-            "Write-Host \"Extracting archive...\"",
-            "Write-Host \"Copying binary...\"",
-        )
-        .lines()
-        .filter(|line| !line.contains("Expand-Archive") && !line.contains("extractDir"))
-        .collect::<Vec<_>>()
-        .join("\n")
+    let mut modified_lines = Vec::new();
+    let mut skip_block = false;
+    for line in script.lines() {
+        if line.contains("Write-Host \"Extracting archive...\"") {
+            modified_lines.push("Write-Host \"Copying binary...\"");
+            skip_block = true;
+            continue;
+        }
+        if skip_block {
+            if line.trim() == "}" {
+                skip_block = false;
+            }
+            continue;
+        }
+        if !line.contains("$zipPath") && !line.contains("extractDir") {
+            modified_lines.push(line);
+        }
+    }
+    modified_lines.join("\n")
 }
