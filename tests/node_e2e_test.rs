@@ -1,7 +1,10 @@
 use assert_cmd::Command;
+use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
-use std::process::Command as ProcessCommand;
+use std::process::{Command as ProcessCommand, Stdio};
+use std::thread;
+use std::time::{Duration, Instant};
 use stop_nagging::yaml_config::{Tool, YamlConfig};
 
 #[test]
@@ -123,7 +126,6 @@ fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-#[ignore]
 fn test_tool_commands() {
     let config = YamlConfig::from_default().unwrap();
 
@@ -138,43 +140,76 @@ fn test_tool_commands() {
                 continue;
             }
 
-            test_tool(tool);
+            test_tool(tool).unwrap_or_else(|e| panic!("Failed to test tool {}: {}", tool.name, e));
         }
     }
 }
 
-fn test_tool(tool: &Tool) {
+fn test_tool(tool: &Tool) -> Result<(), String> {
     // Install if needed and install command exists
     if let Some(install_cmd) = &tool.install_for_testing {
         if !executable_exists(&tool.executable) {
-            let output = ProcessCommand::new("sh")
-                .arg("-c")
-                .arg(install_cmd)
-                .output()
-                .expect("Failed to execute install command");
-
-            if !output.status.success() {
-                return;
+            match run_with_timeout(install_cmd, Duration::from_secs(30)) {
+                Ok(status) if status.success() => {}
+                Ok(_) => {
+                    return Err(format!("Install command failed for {}", tool.name));
+                }
+                Err(e) => {
+                    return Err(format!("Install command error for {}: {}", tool.name, e));
+                }
             }
         }
     }
 
     // Skip if tool is not installed
     if !executable_exists(&tool.executable) {
-        return;
+        return Ok(());
     }
 
     // Run each command
     for cmd in &tool.commands {
-        let output = ProcessCommand::new("sh")
-            .arg("-c")
-            .arg(cmd)
-            .output()
-            .expect("Failed to execute command");
-
-        if !output.status.success() {
-            return;
+        match run_with_timeout(cmd, Duration::from_secs(10)) {
+            Ok(status) if status.success() => {}
+            Ok(_) => {
+                return Err(format!("Command failed for {}: {}", tool.name, cmd));
+            }
+            Err(e) => {
+                return Err(format!("Command error for {}: {}", tool.name, e));
+            }
         }
+    }
+
+    Ok(())
+}
+
+/// Runs `cmd` with a given timeout. Kills the process if it's still running after that.
+fn run_with_timeout(
+    cmd: &str,
+    duration: Duration,
+) -> Result<std::process::ExitStatus, Box<dyn Error>> {
+    let mut child = ProcessCommand::new("sh")
+        .arg("-c")
+        .arg(cmd)
+        .stdin(Stdio::null()) // prevent interactive input
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()?;
+
+    let start = Instant::now();
+
+    loop {
+        if let Some(status) = child.try_wait()? {
+            // Finished normally
+            return Ok(status);
+        }
+
+        if start.elapsed() > duration {
+            // Kill the command if it's still running
+            child.kill()?;
+            return Err(format!("Command `{}` timed out", cmd).into());
+        }
+
+        thread::sleep(Duration::from_millis(50));
     }
 }
 
@@ -185,10 +220,8 @@ fn executable_exists(executable: &str) -> bool {
         format!("which {}", executable)
     };
 
-    ProcessCommand::new("sh")
-        .arg("-c")
-        .arg(which_cmd)
-        .output()
-        .map(|output| output.status.success())
-        .unwrap_or(false)
+    match run_with_timeout(&which_cmd, Duration::from_secs(5)) {
+        Ok(status) => status.success(),
+        Err(_) => false,
+    }
 }
