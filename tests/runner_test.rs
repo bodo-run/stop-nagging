@@ -21,7 +21,13 @@ fn test_disable_nags_one_tool_skip_true() {
     });
 
     let mut ecosystems = HashMap::new();
-    ecosystems.insert("test-ecosystem".to_string(), EcosystemConfig { tools });
+    ecosystems.insert(
+        "test-ecosystem".to_string(),
+        EcosystemConfig {
+            tools,
+            check_ecosystem: None,
+        },
+    );
 
     let config = YamlToolsConfig { ecosystems };
     stop_nagging::runner::disable_nags(&config, &[], &[]);
@@ -39,7 +45,13 @@ fn test_disable_nags_with_ignore_list() {
     });
 
     let mut ecosystems = HashMap::new();
-    ecosystems.insert("test-ecosystem".to_string(), EcosystemConfig { tools });
+    ecosystems.insert(
+        "test-ecosystem".to_string(),
+        EcosystemConfig {
+            tools,
+            check_ecosystem: None,
+        },
+    );
 
     let config = YamlToolsConfig { ecosystems };
     stop_nagging::runner::disable_nags(&config, &[], &["test-tool".to_string()]);
@@ -57,7 +69,13 @@ fn test_disable_nags_with_ecosystem_filter() {
     });
 
     let mut ecosystems = HashMap::new();
-    ecosystems.insert("test-ecosystem".to_string(), EcosystemConfig { tools });
+    ecosystems.insert(
+        "test-ecosystem".to_string(),
+        EcosystemConfig {
+            tools,
+            check_ecosystem: None,
+        },
+    );
 
     let config = YamlToolsConfig { ecosystems };
     stop_nagging::runner::disable_nags(&config, &["other-ecosystem".to_string()], &[]);

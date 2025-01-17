@@ -11,6 +11,8 @@ pub struct YamlToolsConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EcosystemConfig {
     pub tools: Vec<ToolEntry>,
+    #[serde(default)]
+    pub check_ecosystem: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

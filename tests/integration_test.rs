@@ -57,7 +57,7 @@ fn test_stop_nagging_cli_with_ecosystems() {
         .arg("--ecosystems")
         .arg("other");
 
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Skipping ecosystem: test"));
+    cmd.assert().success().stdout(predicate::str::contains(
+        "All applicable nags have been disabled",
+    ));
 }

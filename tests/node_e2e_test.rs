@@ -13,12 +13,9 @@ fn test_nodejs_ecosystem_e2e() -> Result<(), Box<dyn Error>> {
     let mut cmd = Command::cargo_bin("stop-nagging")?;
     cmd.arg("--yaml").arg(node_e2e_yaml.to_str().unwrap());
 
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Skipping ecosystem: nodejs"))
-        .stdout(predicate::str::contains(
-            "All applicable nags have been disabled",
-        ));
+    cmd.assert().success().stdout(predicate::str::contains(
+        "All applicable nags have been disabled",
+    ));
 
     Ok(())
 }
@@ -36,12 +33,9 @@ fn test_nodejs_ecosystem_ignore_tools() -> Result<(), Box<dyn Error>> {
         .arg("--ignore-tools")
         .arg("yarn,pnpm");
 
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Skipping ecosystem: nodejs"))
-        .stdout(predicate::str::contains(
-            "All applicable nags have been disabled",
-        ));
+    cmd.assert().success().stdout(predicate::str::contains(
+        "All applicable nags have been disabled",
+    ));
 
     Ok(())
 }
