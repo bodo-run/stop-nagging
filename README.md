@@ -14,13 +14,22 @@ Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.
 
 ## Installation
 
-### Quick Install
+### Quick Install (Linux/macOS)
 
 ```bash
 curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
 ```
 
 Then add `~/.local/bin` to your PATH if not already.
+
+### Quick Install (Windows)
+
+1. Download and run the PowerShell installer script:
+   ```powershell
+   # Example in PowerShell
+   iwr https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.ps1 -UseBasicParsing | iex
+   ```
+2. If needed, add the installation directory (default: `$HOME\.local\bin`) to your PATH.
 
 ### From Source
 
