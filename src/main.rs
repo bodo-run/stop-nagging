@@ -29,7 +29,5 @@ fn main() {
     };
 
     disable_nags(&yaml_config, &args.ecosystems, &args.ignore_tools);
-
-    println!("All applicable nags have been disabled (or attempts made).");
     std::process::exit(0);
 }

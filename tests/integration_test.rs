@@ -21,9 +21,7 @@ fn test_stop_nagging_cli_with_sample_yaml() {
     let mut cmd = Command::cargo_bin("stop-nagging").expect("Binary not found");
     cmd.arg("--yaml").arg(sample_yaml);
 
-    cmd.assert().success().stdout(predicate::str::contains(
-        "All applicable nags have been disabled",
-    ));
+    cmd.assert().success();
 }
 
 #[test]
@@ -39,9 +37,7 @@ fn test_stop_nagging_cli_with_ignore_tools() {
         .arg("--ignore-tools")
         .arg("echo_test");
 
-    cmd.assert().success().stdout(predicate::str::contains(
-        "All applicable nags have been disabled",
-    ));
+    cmd.assert().success();
 }
 
 #[test]
@@ -57,7 +53,5 @@ fn test_stop_nagging_cli_with_ecosystems() {
         .arg("--ecosystems")
         .arg("other");
 
-    cmd.assert().success().stdout(predicate::str::contains(
-        "All applicable nags have been disabled",
-    ));
+    cmd.assert().success();
 }

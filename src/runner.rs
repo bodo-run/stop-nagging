@@ -1,4 +1,3 @@
-use crate::errors::StopNaggingError;
 use crate::yaml_config::YamlToolsConfig;
 use std::{collections::HashSet, env, process::Command};
 
