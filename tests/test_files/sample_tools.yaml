@@ -1,10 +1,12 @@
-tools:
-  - name: "echo_test"
-    executable: "echo"
-    env:
-      SAMPLE_ENV: "1"
-    commands:
-      - "echo 'E2E test command executed'"
-  - name: "skip_test"
-    executable: "dummy"
-    skip: true
+ecosystems:
+  test:
+    tools:
+      - name: "echo_test"
+        executable: "echo"
+        env:
+          SAMPLE_ENV: "1"
+        commands:
+          - "echo 'E2E test command executed'"
+      - name: "skip_test"
+        executable: "dummy"
+        skip: true

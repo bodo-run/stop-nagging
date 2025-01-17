@@ -1,9 +1,15 @@
-use serde::{Deserialize, Serialize};
-use std::fs;
 use crate::errors::StopNaggingError;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::fs;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct YamlToolsConfig {
+    pub ecosystems: HashMap<String, EcosystemConfig>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct EcosystemConfig {
     pub tools: Vec<ToolEntry>,
 }
 
@@ -25,4 +31,4 @@ impl YamlToolsConfig {
         let config: Self = serde_yaml::from_str(&content)?;
         Ok(config)
     }
-} 
+}
