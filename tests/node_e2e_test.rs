@@ -37,6 +37,27 @@ fn test_nodejs_ecosystem_ignore_tools() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
+fn test_nodejs_ecosystem_verbose() -> Result<(), Box<dyn Error>> {
+    let node_e2e_yaml = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tests")
+        .join("test_files")
+        .join("node_e2e.yaml");
+
+    let mut cmd = Command::cargo_bin("stop-nagging")?;
+    cmd.arg("--yaml")
+        .arg(node_e2e_yaml.to_str().unwrap())
+        .arg("--verbose")
+        .arg("--ignore-ecosystems")
+        .arg("nodejs");
+
+    cmd.assert().success().stdout(predicate::str::contains(
+        "Ignoring entire ecosystem: nodejs",
+    ));
+
+    Ok(())
+}
+
+#[test]
 fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
     // Use the pre-existing nagging package
     let nagging_package = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
