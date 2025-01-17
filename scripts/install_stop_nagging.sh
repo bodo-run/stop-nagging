@@ -3,9 +3,9 @@ set -e
 
 # This script installs stop-nagging locally.
 # Usage:
-#   curl -s https://raw.githubusercontent.com/mohsen1/stop-nagging/main/scripts/install_stop_nagging.sh | bash
+#   curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
 
-REPO_URL="https://github.com/mohsen1/stop-nagging"
+REPO_URL="https://github.com/bodo-run/stop-nagging"
 INSTALL_DIR="$HOME/.local/bin"
 
 if [[ ! -d "$INSTALL_DIR" ]]; then

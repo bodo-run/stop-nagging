@@ -18,7 +18,7 @@ Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.
 ### Quick Install
 
 ```bash
-curl -s https://raw.githubusercontent.com/mohsen1/stop-nagging/main/scripts/install_stop_nagging.sh | bash
+curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
 ```
 
 Then add `~/.local/bin` to your PATH if not already.
@@ -28,7 +28,7 @@ Then add `~/.local/bin` to your PATH if not already.
 1. Ensure Rust is installed
 2. Clone the repository:
    ```bash
-   git clone https://github.com/mohsen1/stop-nagging
+   git clone https://github.com/bodo-run/stop-nagging
    ```
 3. Build and install:
    ```bash

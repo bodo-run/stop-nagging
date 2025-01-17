@@ -2,9 +2,9 @@
 name = "stop-nagging"
 version = "0.1.0"
 edition = "2021"
-description = "A CLI tool to silence or disable upgrade/advertising nags from various JS ecosystem tools."
+description = "A CLI tool to silence or disable upgrade/advertising nags from various development tools and CLIs."
 license = "MIT"
-repository = "https://github.com/mohsen1/stop-nagging"
+repository = "https://github.com/bodo-run/stop-nagging"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
