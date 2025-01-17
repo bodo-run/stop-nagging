@@ -40,7 +40,8 @@ try {
     $releaseData = Invoke-RestMethod -Uri $releasesUrl
 } catch {
     Write-Host "Failed to fetch release info from GitHub."
-    exit 1
+    Write-Host "Please build from source or check back later."
+    exit 0
 }
 
 # Find the asset download URL
@@ -48,7 +49,7 @@ $asset = $releaseData.assets | Where-Object { $_.name -eq $assetName }
 if (!$asset) {
     Write-Host "Failed to find an asset named $assetName in the latest release."
     Write-Host "Check that your OS/ARCH is built or consider building from source."
-    exit 1
+    exit 0
 }
 
 $downloadUrl = $asset.browser_download_url
