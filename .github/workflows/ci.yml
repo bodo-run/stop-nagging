@@ -16,13 +16,27 @@ permissions:
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - uses: Swatinem/rust-cache@v2
+
+      - name: Install Node (Windows)
+        if: startsWith(matrix.os, 'windows-')
+        run: choco install nodejs-lts --no-progress
+
+      - name: Show Node version
+        run: node --version || echo "No Node"
+
       - name: Run tests
-        run: cargo test
+        run: cargo test --verbose
 
   lint:
     name: Lint
