@@ -65,25 +65,25 @@ ecosystems:
         commands: []
         skip: false
 
-  frameworks:
-    check_ecosystem: "command -v next >/dev/null 2>&1 || command -v gatsby >/dev/null 2>&1 || command -v ng >/dev/null 2>&1"
+  js_frameworks:
+    check_ecosystem: "command -v node_modules/.bin/next >/dev/null 2>&1 || command -v node_modules/.bin/gatsby >/dev/null 2>&1 || command -v node_modules/.bin/ng >/dev/null 2>&1"
     tools:
       - name: "next"
-        executable: "next"
+        executable: "node_modules/.bin/next"
         env:
           NEXT_TELEMETRY_DISABLED: "1"
         commands: []
         skip: false
 
       - name: "gatsby"
-        executable: "gatsby"
+        executable: "node_modules/.bin/gatsby"
         env:
           GATSBY_TELEMETRY_DISABLED: "1"
         commands: []
         skip: false
 
       - name: "angular"
-        executable: "ng"
+        executable: "node_modules/.bin/ng"
         env:
           NG_CLI_ANALYTICS: "false"
         commands:
