@@ -4,12 +4,6 @@
 
 It uses a YAML file (`tools.yaml`) to list each tool's name, environment variables, and commands to run, making it easy for new contributors to update the logic without writing Rust code.
 
-## Features
-
-- Uses a centralized `tools.yaml` to define each tool's disabling strategy (commands, env vars, etc.)
-- Configurable via CLI flags (planned)
-- Installs easily with `curl`
-
 ## Supported Tools
 
 Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.

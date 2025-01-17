@@ -80,7 +80,16 @@ fn test_npm_outdated_nag() -> Result<(), Box<dyn Error>> {
         .assert()
         .success();
 
-    // Check npm config after running stop-nagging
+    // Run npm config list to verify the environment variable is set
+    let mut env_cmd = Command::new("npm");
+    env_cmd
+        .args(["config", "list"])
+        .current_dir(&nagging_package)
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("update-notifier = false"));
+
+    // Also verify the config is set to false
     let mut post_config_cmd = Command::new("npm");
     post_config_cmd
         .args(["config", "get", "update-notifier"])
