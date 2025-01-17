@@ -1,0 +1,617 @@
+tools:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # NPM
+  # Disables update-notifier prompts
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "npm"
+    executable: "npm"
+    env:
+      NPM_CONFIG_UPDATE_NOTIFIER: "false"
+    commands:
+      - "npm config set update-notifier false"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PNPM
+  # Disables PNPM’s update notifications or promotional messages
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "pnpm"
+    executable: "pnpm"
+    env:
+    commands:
+      - "pnpm config set notify false"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Yarn
+  # Disables Yarn’s telemetry or version-check nags
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "yarn"
+    executable: "yarn"
+    env:
+      YARN_IGNORE_PATH: "1"
+    commands:
+      - "yarn config set enableTelemetry 0"
+      - "yarn config set enableGlobalCache 1" # optional, just an example
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Vercel
+  # Skips prompts to link or upgrade
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "vercel"
+    executable: "vercel"
+    env:
+      VERCEL_CLI_SKIP_PROMPTS: "1"
+    commands:
+      # Could do "vercel link --confirm" or similar if needed
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Netlify CLI
+  # Disables upgrade messages or usage nags (best guess)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "netlify"
+    executable: "netlify"
+    env:
+      NETLIFY_CLI_DISABLE_VERSION_CHECK: "true"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Prisma
+  # Hides repeated update messages
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "prisma"
+    executable: "prisma"
+    env:
+      PRISMA_HIDE_UPDATE_MESSAGE: "true"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Node
+  # Example usage: forcibly alias with --no-warnings
+  # (This might just be a placeholder— Node doesn’t have a single “disable nag”)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "node"
+    executable: "node"
+    env:
+    commands:
+      - 'echo ''alias node="node --no-warnings"'' >> ~/.bashrc'
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # AWS Amplify CLI
+  # Possibly stops certain prompts to create new environment, etc.
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "amplify"
+    executable: "amplify"
+    env:
+      AMPLIFY_NO_UPDATE_NOTIFIER: "true"
+    commands:
+      - "amplify configure project --yes" # If you want to skip interactive Qs
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Heroku CLI
+  # Disables the “Heroku CLI new version available” messages (placeholder)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "heroku"
+    executable: "heroku"
+    env:
+      HEROKU_HIDE_UPDATE_NOTIFIER: "true"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Firebase CLI
+  # Disables certain telemetry or version checks (placeholder)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "firebase"
+    executable: "firebase"
+    env:
+      FIREBASE_CLI_PREVIEWS: "silent"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Angular CLI
+  # Disables telemetry
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "ng"
+    executable: "ng"
+    env:
+      NG_CLI_ANALYTICS: "false"
+    commands:
+      - "ng analytics off"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Vue CLI
+  # Disables version checks (placeholder)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "vue"
+    executable: "vue"
+    env:
+      VUE_CLI_DISABLE_UPGRADE_CHECK: "true"
+    commands: []
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Create React App
+  # Typically has minimal nags, but we can include an example
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "create-react-app"
+    executable: "create-react-app"
+    env:
+    commands:
+      - "npm config set scripts-prepend-node-path auto" # just an example
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Expo CLI
+  # Disables or reduces telemetry prompts
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "expo"
+    executable: "expo"
+    env:
+      EXPO_NO_TELEMETRY: "1"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Next.js
+  # Next CLI might not have a direct “disable nag” path, but we can set placeholders
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "next"
+    executable: "next"
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    commands:
+      # Possibly "npm config set next-disable-telemetry true" if needed
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Gatsby
+  # Disables telemetry
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "gatsby"
+    executable: "gatsby"
+    env:
+      GATSBY_TELEMETRY_DISABLED: "1"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # TypeDoc
+  # Might not have nags, but just an example
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "typedoc"
+    executable: "typedoc"
+    env:
+    commands:
+      - "echo 'No known nags for typedoc, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # ESLint
+  # Typically no major nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "eslint"
+    executable: "eslint"
+    env:
+    commands:
+      - "echo 'No known nags for eslint, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Stylelint
+  # Typically no major nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "stylelint"
+    executable: "stylelint"
+    env:
+    commands:
+      - "echo 'No known nags for stylelint, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Jest
+  # Typically no major nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "jest"
+    executable: "jest"
+    env:
+    commands:
+      - "echo 'No known nags for jest, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Mocha
+  # Typically no major nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "mocha"
+    executable: "mocha"
+    env:
+    commands:
+      - "echo 'No known nags for mocha, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Cypress
+  # Disables update check (placeholder)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "cypress"
+    executable: "cypress"
+    env:
+      CYPRESS_UPDATE_NOTIFIER: "false"
+    commands:
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Webpack
+  # Typically no nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "webpack"
+    executable: "webpack"
+    env:
+    commands:
+      - "echo 'No known nags for webpack, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Rollup
+  # Typically no nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "rollup"
+    executable: "rollup"
+    env:
+    commands:
+      - "echo 'No known nags for rollup, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Parcel
+  # Typically no nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "parcel"
+    executable: "parcel"
+    env:
+    commands:
+      - "echo 'No known nags for parcel, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Grunt
+  # Typically no nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "grunt"
+    executable: "grunt"
+    env:
+    commands:
+      - "echo 'No known nags for grunt, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Gulp
+  # Typically no nags, example placeholder
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "gulp"
+    executable: "gulp"
+    env:
+    commands:
+      - "echo 'No known nags for gulp, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Serverless Framework
+  # Disables update prompts or adverts
+  # ─────────────────────────────────────────────────────────────────────────────
+  - name: "serverless"
+    executable: "serverless"
+    env:
+      SLS_DISABLE_AUTO_UPDATE: "1"
+    commands:
+      - "serverless config --no-autoupdate" # example
+    skip: false
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Python Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # pip
+  # Disables update notifications or reduces version-check nags (placeholder).
+  - name: "pip"
+    executable: "pip"
+    env:
+      # Example environment variables (not standard pip usage).
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    commands:
+      # pip doesn’t have an official single “disable nag” command.
+      # Setting env is typically enough.
+    skip: false
+
+  # pipenv
+  # Potentially turns off automatic checks (placeholder).
+  - name: "pipenv"
+    executable: "pipenv"
+    env:
+      PIPENV_VERBOSITY: "-1" # makes pipenv quieter
+      PIPENV_HIDE_EMOJIS: "1"
+    commands:
+      # Might run "pipenv --rm" to forcibly remove virtual env, etc. (placeholder)
+    skip: false
+
+  # poetry
+  # Disables version checks or analytics (placeholder).
+  - name: "poetry"
+    executable: "poetry"
+    env:
+    commands:
+      - "poetry config experimental.new-installer false"
+      - "poetry config cache-dir .poetry-cache" # example to direct caches
+    skip: false
+
+  # conda
+  # May reduce update prompts (placeholder).
+  - name: "conda"
+    executable: "conda"
+    env:
+      CONDA_AUTO_UPDATE_CONDA: "false"
+    commands:
+      - "conda config --set notify_outdated_conda false"
+    skip: false
+
+  # django-admin
+  # Typically no big nags, placeholder
+  - name: "django-admin"
+    executable: "django-admin"
+    env:
+    commands:
+      - "echo 'No known nags for django-admin, placeholder only'"
+    skip: false
+
+  # flask
+  # Typically no big nags, placeholder
+  - name: "flask"
+    executable: "flask"
+    env:
+    commands:
+      - "echo 'No known nags for flask, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Ruby Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # gem
+  # Disables the “gem update” notifications or something similar (placeholder).
+  - name: "gem"
+    executable: "gem"
+    env:
+    commands:
+      - "gem sources --remove https://rubygems.org" # just an example, not recommended
+      - "gem config --local no-document true"
+    skip: false
+
+  # bundler
+  # May reduce version-check or analytics (placeholder).
+  - name: "bundler"
+    executable: "bundle"
+    env:
+    commands:
+      - "bundle config set disable_version_check true"
+      - "bundle config set silence_root_warning true"
+    skip: false
+
+  # rails
+  # Typically no “nag” to disable, placeholder
+  - name: "rails"
+    executable: "rails"
+    env:
+    commands:
+      - "echo 'No known nags for rails, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PHP Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # composer
+  # Disables update/advertisement or version-check messages
+  - name: "composer"
+    executable: "composer"
+    env:
+      COMPOSER_DISABLE_XDEBUG_WARN: "1"
+    commands:
+      - "composer config --global discard-changes true"
+      - "composer config --global auto-scripts false" # placeholder
+    skip: false
+
+  # laravel
+  # Typically no big nags, placeholder
+  - name: "laravel"
+    executable: "laravel"
+    env:
+    commands:
+      - "echo 'No known nags for laravel, placeholder only'"
+    skip: false
+
+  # symfony
+  # Typically no big nags, placeholder
+  - name: "symfony"
+    executable: "symfony"
+    env:
+    commands:
+      - "echo 'No known nags for symfony, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Java Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # gradle
+  # Disables Gradle’s version-check or possible usage analytics
+  - name: "gradle"
+    executable: "gradle"
+    env:
+      # Gradle can be quieted by environment variables or init scripts
+      GRADLE_OPTS: "-Dorg.gradle.internal.launcher.welcomeMessageEnabled=false"
+    commands:
+      - "echo 'org.gradle.caching=false' >> gradle.properties"
+      - "echo 'org.gradle.logging.level=QUIET' >> gradle.properties"
+    skip: false
+
+  # maven
+  # Disables update checks, snapshot resolution warnings, etc. (placeholder).
+  - name: "mvn"
+    executable: "mvn"
+    env:
+      MAVEN_OPTS: "-Djansi.force=false"
+    commands:
+      - "echo '<settings><interactiveMode>false</interactiveMode></settings>' > ~/.m2/settings.xml"
+    skip: false
+
+  # sbt
+  # For Scala builds – quiet version checks or analytics
+  - name: "sbt"
+    executable: "sbt"
+    env:
+      SBT_OPTS: "-Dsbt.log.noformat=true"
+    commands:
+      - "echo 'sbt.version=1.5.5' > project/build.properties" # example placeholder
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # .NET Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # dotnet CLI
+  # Disables telemetry and version checks
+  - name: "dotnet"
+    executable: "dotnet"
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+    commands:
+      - "echo 'DOTNET_CLI_TELEMETRY_OPTOUT=1' >> ~/.bashrc"
+    skip: false
+
+  # msbuild
+  # Typically no direct nags, placeholder
+  - name: "msbuild"
+    executable: "msbuild"
+    env:
+    commands:
+      - "echo 'No known nags for msbuild, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Go Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # go
+  # Typically no major nags, might set env to reduce module fetch noise (placeholder)
+  - name: "go"
+    executable: "go"
+    env:
+      GO111MODULE: "on"
+    commands:
+      - "echo 'No known nags for go, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Rust Ecosystem
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # cargo
+  # Disables update-notifications or analytics (placeholder).
+  - name: "cargo"
+    executable: "cargo"
+    env:
+      CARGO_TERM_PROGRESS_WHEN: "never"
+    commands:
+      - "cargo --version" # just a placeholder to test existence
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Container / DevOps Tools
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # docker
+  # Docker might prompt to enable certain features or auto-updates
+  - name: "docker"
+    executable: "docker"
+    env:
+    commands:
+      - "echo 'No known nags for docker, placeholder only'"
+    skip: false
+
+  # kubectl
+  # Typically no nags, placeholder
+  - name: "kubectl"
+    executable: "kubectl"
+    env:
+    commands:
+      - "echo 'No known nags for kubectl, placeholder only'"
+    skip: false
+
+  # helm
+  # Might have version checks, placeholder
+  - name: "helm"
+    executable: "helm"
+    env:
+      HELM_DRIVER: "secret" # example
+    commands:
+      - "echo 'No known nags for helm, placeholder only'"
+    skip: false
+
+  # terraform
+  # Disables update checks (placeholder).
+  - name: "terraform"
+    executable: "terraform"
+    env:
+      CHECKPOINT_DISABLE: "1"
+    commands:
+    skip: false
+
+  # ansible
+  # Typically no big nags, placeholder
+  - name: "ansible"
+    executable: "ansible"
+    env:
+    commands:
+      - "echo 'No known nags for ansible, placeholder only'"
+    skip: false
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Cloud CLIs
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  # AWS CLI
+  # Typically no upgrade nag, might set env to reduce certain usage prompts (placeholder).
+  - name: "aws"
+    executable: "aws"
+    env:
+    commands:
+      - "echo 'No known nags for aws cli, placeholder only'"
+    skip: false
+
+  # Azure CLI
+  # Potentially might have telemetry or version checks (placeholder).
+  - name: "az"
+    executable: "az"
+    env:
+      AZURE_CORE_COLLECT_TELEMETRY: "false"
+    commands:
+    skip: false
+
+  # Google Cloud SDK
+  # Disables usage reporting
+  - name: "gcloud"
+    executable: "gcloud"
+    env:
+      CLOUDSDK_CORE_DISABLE_USAGE_REPORTING: "true"
+    commands:
+      - "gcloud config set disable_usage_reporting true"
+    skip: false
