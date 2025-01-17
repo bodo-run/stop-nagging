@@ -56,6 +56,8 @@ stop-nagging [options]
   - See [`tools.yaml`](tools.yaml) for the default configuration
 - `--ignore-tools <TOOLS>`: Comma-separated list of tool names to ignore (e.g., `npm,yarn`)
 - `--ecosystems <ECOSYSTEMS>`: Comma-separated list of ecosystems to run (leave empty to run all)
+- `--ignore-ecosystems <ECOSYSTEMS>`: Comma-separated list of ecosystems to skip entirely
+- `-v, --verbose`: Enable verbose logging for debugging and detailed progress information
 
 ### Examples
 
@@ -72,8 +74,14 @@ stop-nagging --ignore-tools npm,yarn,pnpm
 # Only run for specific ecosystems (using default configuration)
 stop-nagging --ecosystems nodejs,python
 
+# Skip entire ecosystems
+stop-nagging --ignore-ecosystems python,rust
+
+# Enable verbose output
+stop-nagging --verbose
+
 # Combine multiple options with custom configuration
-stop-nagging --yaml custom.yaml --ignore-tools npm --ecosystems nodejs
+stop-nagging --yaml custom.yaml --ignore-tools npm --ecosystems nodejs --verbose
 ```
 
 ## Contributing
