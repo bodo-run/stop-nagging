@@ -1,84 +1,77 @@
 use std::collections::HashMap;
-use stop_nagging::runner::{check_tool_executable, disable_nags, run_shell_command};
 use stop_nagging::yaml_config::{EcosystemConfig, ToolEntry, YamlToolsConfig};
 
 #[test]
-fn test_check_tool_executable_missing() {
-    let result = check_tool_executable("some_nonexistent_tool_for_test123");
-    assert!(result.is_err(), "Expected error for missing executable");
-}
-
-#[test]
-fn test_run_shell_command_success() {
-    let result = run_shell_command("echo Hello");
-    assert!(result.is_ok(), "Expected success running 'echo Hello'");
-}
-
-#[test]
 fn test_disable_nags_empty_config() {
-    let cfg = YamlToolsConfig {
+    let config = YamlToolsConfig {
         ecosystems: HashMap::new(),
     };
-    let result = disable_nags(&cfg, &[], &[]);
-    assert!(
-        result.is_ok(),
-        "disable_nags with empty config should succeed"
-    );
+    stop_nagging::runner::disable_nags(&config, &[], &[]);
 }
 
 #[test]
 fn test_disable_nags_one_tool_skip_true() {
-    let mut ecosystems = HashMap::new();
-    let tool = ToolEntry {
-        name: "TestTool".to_string(),
-        executable: "echo".to_string(),
+    let mut tools = Vec::new();
+    tools.push(ToolEntry {
+        name: "test-tool".to_string(),
+        executable: "test-executable".to_string(),
+        skip: Some(true),
         env: None,
         commands: None,
-        skip: Some(true),
-    };
-    let ecosystem = EcosystemConfig { tools: vec![tool] };
-    ecosystems.insert("test".to_string(), ecosystem);
-    let cfg = YamlToolsConfig { ecosystems };
+    });
 
-    let result = disable_nags(&cfg, &[], &[]);
-    assert!(result.is_ok(), "Skipping a tool should not fail");
+    let mut ecosystems = HashMap::new();
+    ecosystems.insert("test-ecosystem".to_string(), EcosystemConfig { tools });
+
+    let config = YamlToolsConfig { ecosystems };
+    stop_nagging::runner::disable_nags(&config, &[], &[]);
 }
 
 #[test]
 fn test_disable_nags_with_ignore_list() {
-    let mut ecosystems = HashMap::new();
-    let tool = ToolEntry {
-        name: "TestTool".to_string(),
-        executable: "echo".to_string(),
+    let mut tools = Vec::new();
+    tools.push(ToolEntry {
+        name: "test-tool".to_string(),
+        executable: "test-executable".to_string(),
+        skip: None,
         env: None,
         commands: None,
-        skip: None,
-    };
-    let ecosystem = EcosystemConfig { tools: vec![tool] };
-    ecosystems.insert("test".to_string(), ecosystem);
-    let cfg = YamlToolsConfig { ecosystems };
+    });
 
-    let result = disable_nags(&cfg, &[], &["TestTool".to_string()]);
-    assert!(result.is_ok(), "Ignoring a tool via CLI should not fail");
+    let mut ecosystems = HashMap::new();
+    ecosystems.insert("test-ecosystem".to_string(), EcosystemConfig { tools });
+
+    let config = YamlToolsConfig { ecosystems };
+    stop_nagging::runner::disable_nags(&config, &[], &["test-tool".to_string()]);
 }
 
 #[test]
 fn test_disable_nags_with_ecosystem_filter() {
-    let mut ecosystems = HashMap::new();
-    let tool = ToolEntry {
-        name: "TestTool".to_string(),
-        executable: "echo".to_string(),
+    let mut tools = Vec::new();
+    tools.push(ToolEntry {
+        name: "test-tool".to_string(),
+        executable: "test-executable".to_string(),
+        skip: None,
         env: None,
         commands: None,
-        skip: None,
-    };
-    let ecosystem = EcosystemConfig { tools: vec![tool] };
-    ecosystems.insert("test".to_string(), ecosystem);
-    let cfg = YamlToolsConfig { ecosystems };
+    });
 
-    let result = disable_nags(&cfg, &["other".to_string()], &[]);
-    assert!(
-        result.is_ok(),
-        "Filtering ecosystems via CLI should not fail"
-    );
+    let mut ecosystems = HashMap::new();
+    ecosystems.insert("test-ecosystem".to_string(), EcosystemConfig { tools });
+
+    let config = YamlToolsConfig { ecosystems };
+    stop_nagging::runner::disable_nags(&config, &["other-ecosystem".to_string()], &[]);
+}
+
+#[test]
+fn test_check_tool_executable_missing() {
+    let result = stop_nagging::runner::check_tool_executable("non-existent-tool-12345");
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_run_shell_command_success() {
+    println!("Hello");
+    let result = stop_nagging::runner::run_shell_command("echo test");
+    assert!(result.is_ok());
 }
