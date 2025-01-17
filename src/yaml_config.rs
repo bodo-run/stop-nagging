@@ -1,40 +1,40 @@
-use crate::errors::StopNaggingError;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs;
+use std::path::Path;
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct YamlToolsConfig {
-    pub ecosystems: HashMap<String, EcosystemConfig>,
+#[derive(Debug, Deserialize)]
+pub struct YamlConfig {
+    pub ecosystems: HashMap<String, Ecosystem>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct EcosystemConfig {
-    pub tools: Vec<ToolEntry>,
-    #[serde(default)]
+impl YamlConfig {
+    pub fn from_default() -> Result<Self, Box<dyn std::error::Error>> {
+        let config_str = include_str!("../tools.yaml");
+        let config: YamlConfig = serde_yaml::from_str(config_str)?;
+        Ok(config)
+    }
+
+    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, Box<dyn std::error::Error>> {
+        let contents = fs::read_to_string(path)?;
+        let config: YamlConfig = serde_yaml::from_str(&contents)?;
+        Ok(config)
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Ecosystem {
     pub check_ecosystem: Option<String>,
+    pub tools: Vec<Tool>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ToolEntry {
+#[derive(Debug, Deserialize, Clone)]
+pub struct Tool {
     pub name: String,
     pub executable: String,
-    #[serde(default)]
-    pub env: Option<std::collections::HashMap<String, String>>,
-    #[serde(default)]
-    pub commands: Option<Vec<String>>,
-    #[serde(default)]
-    pub skip: Option<bool>,
-}
-
-impl YamlToolsConfig {
-    pub fn from_yaml_str(yaml_str: &str) -> Result<Self, StopNaggingError> {
-        serde_yaml::from_str(yaml_str).map_err(|e| StopNaggingError::Yaml(e.to_string()))
-    }
-
-    pub fn from_yaml_file(path: &str) -> Result<Self, StopNaggingError> {
-        let contents = fs::read_to_string(path)
-            .map_err(|e| StopNaggingError::File(format!("Failed to read file: {}", e)))?;
-        Self::from_yaml_str(&contents)
-    }
+    pub env: HashMap<String, String>,
+    pub commands: Vec<String>,
+    pub skip: bool,
+    #[allow(dead_code)]
+    pub install_for_testing: Option<String>,
 }

@@ -1,39 +1,31 @@
 mod cli;
-mod errors;
 mod runner;
 mod yaml_config;
 
-use crate::cli::StopNaggingArgs;
-use crate::runner::disable_nags;
-use crate::yaml_config::YamlToolsConfig;
 use clap::Parser;
+use cli::Cli;
+use runner::Runner;
+use yaml_config::YamlConfig;
 
 fn main() {
-    let args = StopNaggingArgs::parse();
+    let cli = Cli::parse();
 
-    let yaml_config = if let Some(yaml_path) = args.yaml {
-        // User provided a custom YAML file
-        match YamlToolsConfig::from_yaml_file(&yaml_path) {
+    let config = if let Some(yaml_path) = cli.yaml {
+        match YamlConfig::from_file(yaml_path) {
             Ok(config) => config,
             Err(e) => {
-                eprintln!("Failed to read custom YAML config '{}': {}", yaml_path, e);
+                eprintln!("Warning: Failed to load custom YAML file: {}", e);
                 eprintln!("Falling back to default configuration");
-                YamlToolsConfig::from_yaml_str(include_str!("../tools.yaml"))
-                    .expect("Default tools.yaml should be valid")
+                YamlConfig::from_default().expect("Failed to load default configuration")
             }
         }
     } else {
-        // Use the embedded tools.yaml
-        YamlToolsConfig::from_yaml_str(include_str!("../tools.yaml"))
-            .expect("Default tools.yaml should be valid")
+        YamlConfig::from_default().expect("Failed to load default configuration")
     };
 
-    disable_nags(
-        &yaml_config,
-        &args.ecosystems,
-        &args.ignore_ecosystems,
-        &args.ignore_tools,
-        args.verbose,
-    );
-    std::process::exit(0);
+    let ignore_tools = cli.ignore_tools.unwrap_or_default();
+    let ecosystems = cli.ecosystems.unwrap_or_default();
+
+    let runner = Runner::new(config, ignore_tools, ecosystems, cli.verbose);
+    runner.run();
 }

@@ -8,6 +8,7 @@ ecosystems:
           NPM_CONFIG_UPDATE_NOTIFIER: "false"
         commands:
           - "npm config set update-notifier false"
+        install_for_testing: "npm install -g npm@latest"
         skip: false
 
       - name: "pnpm"
@@ -15,6 +16,7 @@ ecosystems:
         env: {}
         commands:
           - "pnpm config set notify false"
+        install_for_testing: "npm install -g pnpm@latest"
         skip: false
 
       - name: "yarn"
@@ -24,6 +26,7 @@ ecosystems:
         commands:
           - "yarn config set enableTelemetry 0"
           - "yarn config set enableGlobalCache 1"
+        install_for_testing: "npm install -g yarn@latest"
         skip: false
 
   cloud:
@@ -49,6 +52,7 @@ ecosystems:
           AMPLIFY_NO_UPDATE_NOTIFIER: "true"
         commands:
           - "amplify configure project --yes"
+        install_for_testing: "npm install -g @aws-amplify/cli"
         skip: false
 
   database:
@@ -84,6 +88,7 @@ ecosystems:
           NG_CLI_ANALYTICS: "false"
         commands:
           - "ng analytics off"
+        install_for_testing: "npm install -g @angular/cli"
         skip: false
 
   python:
@@ -109,6 +114,7 @@ ecosystems:
         env: {}
         commands:
           - "poetry config experimental.new-installer false"
+        install_for_testing: "curl -sSL https://install.python-poetry.org | python3 -"
         skip: false
 
       - name: "conda"
@@ -117,6 +123,7 @@ ecosystems:
           CONDA_AUTO_UPDATE_CONDA: "false"
         commands:
           - "conda config --set notify_outdated_conda false"
+        install_for_testing: "curl -L -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && bash Miniconda3-latest-Linux-x86_64.sh -b"
         skip: false
 
   ruby:
@@ -128,6 +135,7 @@ ecosystems:
         commands:
           - "bundle config set disable_version_check true"
           - "bundle config set silence_root_warning true"
+        install_for_testing: "gem install bundler"
         skip: false
 
   php:
@@ -139,6 +147,7 @@ ecosystems:
           COMPOSER_DISABLE_XDEBUG_WARN: "1"
         commands:
           - "composer config --global discard-changes true"
+        install_for_testing: "curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"
         skip: false
 
   java:
@@ -151,6 +160,7 @@ ecosystems:
         commands:
           - "echo 'org.gradle.caching=false' >> gradle.properties"
           - "echo 'org.gradle.logging.level=QUIET' >> gradle.properties"
+        install_for_testing: "sdk install gradle"
         skip: false
 
       - name: "maven"
@@ -159,6 +169,7 @@ ecosystems:
           MAVEN_OPTS: "-Djansi.force=false"
         commands:
           - "echo '<settings><interactiveMode>false</interactiveMode></settings>' > ~/.m2/settings.xml"
+        install_for_testing: "sdk install maven"
         skip: false
 
   dotnet:
@@ -204,6 +215,7 @@ ecosystems:
           CLOUDSDK_CORE_DISABLE_USAGE_REPORTING: "true"
         commands:
           - "gcloud config set disable_usage_reporting true"
+        install_for_testing: "curl https://sdk.cloud.google.com | bash"
         skip: false
 
   devops:
