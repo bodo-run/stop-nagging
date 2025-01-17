@@ -4,6 +4,9 @@
 
 It uses a YAML file (`tools.yaml`) to list each tool's name, environment variables, and commands to run, making it easy for new contributors to update the logic without writing Rust code.
 
+> [!WARNING]  
+> This tool is very new and may not work for all your tools. If you find a tool that doesn't work, please open an issue or submit a PR to fix it.
+
 ## Philosophy
 
 `stop-nagging` is designed to be a fast, simple, and effective tool for disabling nags and warnings. Running `stop-nagging` should be a no-op and it should not modify the source code. Some tools might require configuration changes to stop nagging, we will not modify the source code to do this.
@@ -19,8 +22,6 @@ Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.
 ```bash
 curl -s https://raw.githubusercontent.com/bodo-run/stop-nagging/main/scripts/install_stop_nagging.sh | bash
 ```
-
-Then add `~/.local/bin` to your PATH if not already.
 
 ### Quick Install (Windows)
 
