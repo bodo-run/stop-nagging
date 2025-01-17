@@ -35,6 +35,6 @@ pub struct Tool {
     pub env: HashMap<String, String>,
     pub commands: Vec<String>,
     pub skip: bool,
-    #[serde(default)]
+    #[allow(dead_code)]
     pub install_for_testing: Option<String>,
 }
