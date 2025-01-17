@@ -4,6 +4,10 @@
 
 It uses a YAML file (`tools.yaml`) to list each tool's name, environment variables, and commands to run, making it easy for new contributors to update the logic without writing Rust code.
 
+## Philosophy
+
+`stop-nagging` is designed to be a fast, simple, and effective tool for disabling nags and warnings. Running `stop-nagging` should be a no-op and it should not modify the source code. Some tools might require configuration changes to stop nagging, we will not modify the source code to do this.
+
 ## Supported Tools
 
 Head over to [`tools.yaml`](tools.yaml) to see the list of supported tools.

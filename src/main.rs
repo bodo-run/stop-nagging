@@ -28,6 +28,12 @@ fn main() {
             .expect("Default tools.yaml should be valid")
     };
 
-    disable_nags(&yaml_config, &args.ecosystems, &args.ignore_tools);
+    disable_nags(
+        &yaml_config,
+        &args.ecosystems,
+        &args.ignore_ecosystems,
+        &args.ignore_tools,
+        args.verbose,
+    );
     std::process::exit(0);
 }

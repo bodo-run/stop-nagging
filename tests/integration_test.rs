@@ -55,3 +55,38 @@ fn test_stop_nagging_cli_with_ecosystems() {
 
     cmd.assert().success();
 }
+
+#[test]
+fn test_stop_nagging_cli_with_ignore_ecosystems() {
+    let sample_yaml = format!(
+        "{}/tests/test_files/sample_tools.yaml",
+        env!("CARGO_MANIFEST_DIR")
+    );
+
+    let mut cmd = Command::cargo_bin("stop-nagging").expect("Binary not found");
+    cmd.arg("--yaml")
+        .arg(sample_yaml)
+        .arg("--ignore-ecosystems")
+        .arg("test");
+
+    cmd.assert().success();
+}
+
+#[test]
+fn test_stop_nagging_cli_with_verbose() {
+    let sample_yaml = format!(
+        "{}/tests/test_files/sample_tools.yaml",
+        env!("CARGO_MANIFEST_DIR")
+    );
+
+    let mut cmd = Command::cargo_bin("stop-nagging").expect("Binary not found");
+    cmd.arg("--yaml")
+        .arg(sample_yaml)
+        .arg("--verbose")
+        .arg("--ignore-ecosystems")
+        .arg("test");
+
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("Ignoring entire ecosystem: test"));
+}

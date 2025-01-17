@@ -4,7 +4,7 @@ use clap::Parser;
 #[command(name = "stop-nagging")]
 #[command(version = "0.1.0")]
 #[command(
-    about = "A Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings from various CLI tools and development tools.\n\nIt uses a YAML file (tools.yaml) to list each tool's name, environment variables, and commands to run, making it easy for new contributors to update the logic without writing Rust code."
+    about = "A Rust-based CLI tool that silences or disables upgrade/advertising nags and other unnecessary warnings."
 )]
 pub struct StopNaggingArgs {
     /// Optional path to a custom YAML configuration file. If not provided, the default configuration will be used.
@@ -18,4 +18,12 @@ pub struct StopNaggingArgs {
     /// A comma-separated list of ecosystems to run (leave empty to run all)
     #[arg(long = "ecosystems", num_args=0.., value_delimiter=',', default_value = "")]
     pub ecosystems: Vec<String>,
+
+    /// A comma-separated list of ecosystems to skip entirely
+    #[arg(long = "ignore-ecosystems", num_args=0.., value_delimiter=',', default_value = "")]
+    pub ignore_ecosystems: Vec<String>,
+
+    /// Enable verbose logging
+    #[arg(long = "verbose", short = 'v')]
+    pub verbose: bool,
 }
