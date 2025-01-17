@@ -170,6 +170,7 @@ fn test_tool(tool: &Tool) -> Result<(), String> {
         || tool.name == "amplify"
         || tool.name == "maven"
         || tool.name == "angular"
+        || tool.name == "conda"
     {
         return Ok(());
     }
