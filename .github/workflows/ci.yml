@@ -134,6 +134,7 @@ jobs:
             *.tar.gz
             *.zip
       - name: Copy installation script to bodo.run
+        if: steps.semantic.outputs.new_release_published == 'true'
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -144,6 +145,11 @@ jobs:
           BODO_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           cd bodo-run.github.io
           git add public/stop-nagging.sh public/stop-nagging.ps1
+          # Exit with 0 if no changes
+          if git diff --exit-code; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git commit -m "Update stop-nagging installation scripts" \
             -m "" \
             -m "$BODO_COMMIT_MESSAGE" \
