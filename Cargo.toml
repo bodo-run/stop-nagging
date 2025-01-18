@@ -16,3 +16,9 @@ thiserror = "1.0"
 assert_cmd = "2.0"
 predicates = "2.0"
 tempfile = "3.8"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true  # Strip symbols from binary
+opt-level = 3 # Maximum optimization
